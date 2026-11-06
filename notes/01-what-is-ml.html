@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>什麼是機器學習 | ML 筆記站</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body data-note-id="01-what-is-ml" data-root="..">
+
+  <header class="topbar">
+    <a class="brand" href="../index.html" data-site="name">ML 筆記站</a>
+    <nav>
+      <a href="../index.html">notes</a>
+      <a href="https://github.com/" data-site="repo">github</a>
+    </nav>
+  </header>
+
+  <div class="layout">
+    <article class="note">
+      <div class="breadcrumb"></div>
+
+      <header class="note-head">
+        <div class="week">WEEK 01</div>
+        <h1>什麼是機器學習</h1>
+        <div class="meta">
+          <time datetime="2026-09-08">2026-09-08</time>
+          <span class="tag">基礎觀念</span>
+          <span class="tag">監督式學習</span>
+        </div>
+      </header>
+
+      <div class="tldr">傳統程式是「人寫規則，電腦算答案」；機器學習是「給電腦資料和答案，讓它自己找出規則」。</div>
+
+      <section id="goals">
+        <h2>學習目標</h2>
+        <ul>
+          <li>能夠說明機器學習和傳統程式設計的差別</li>
+          <li>能夠區分監督式、非監督式與強化學習</li>
+          <li>能夠判斷一個問題是「分類」還是「迴歸」</li>
+          <li>能夠解釋為什麼要切分訓練集與測試集</li>
+        </ul>
+      </section>
+
+      <section id="intuition">
+        <h2>從寫規則到學規則</h2>
+        <p>假設要寫一個垃圾郵件過濾器。傳統作法是人工列規則：「標題有『免費』就擋」「寄件者不在通訊錄就擋」……但規則永遠寫不完，騙子也會換字。</p>
+        <p>機器學習（Machine Learning）換個方向：收集一萬封已經標好「垃圾／正常」的信，讓演算法自己找出哪些特徵最能區分兩者。</p>
+        <table class="compare">
+          <thead><tr><th>　</th><th>傳統程式</th><th>機器學習</th></tr></thead>
+          <tbody>
+            <tr><td>輸入</td><td>資料 + 規則</td><td>資料 + 答案</td></tr>
+            <tr><td>輸出</td><td>答案</td><td>規則（模型）</td></tr>
+            <tr><td>適合</td><td>規則明確、不常變</td><td>規則難以描述、資料很多</td></tr>
+          </tbody>
+        </table>
+        <div class="callout tip"><strong>小技巧</strong> 判斷要不要用 ML：如果你自己都說不清楚「怎麼判斷」，但能輕鬆標出「對或錯」，就是 ML 的好題目。</div>
+      </section>
+
+      <section id="types">
+        <h2>三種學習方式</h2>
+        <dl class="terms">
+          <dt>監督式學習 Supervised Learning</dt>
+          <dd>每筆資料都有標準答案（標籤）。例如：房屋特徵 → 房價、圖片 → 貓或狗。</dd>
+          <dt>非監督式學習 Unsupervised Learning</dt>
+          <dd>沒有答案，讓模型自己找結構。例如：把顧客依購買行為分群。</dd>
+          <dt>強化學習 Reinforcement Learning</dt>
+          <dd>沒有標準答案，只有「獎勵」。模型透過試錯學會策略。例如：AlphaGo 下棋。</dd>
+        </dl>
+        <h3>監督式學習的兩大任務</h3>
+        <ul>
+          <li><strong>迴歸（Regression）</strong>：預測連續數值，例如明天氣溫、房價</li>
+          <li><strong>分類（Classification）</strong>：預測類別，例如垃圾信與否、手寫數字 0～9</li>
+        </ul>
+        <div class="callout warn"><strong>常見錯誤</strong> 「預測 1～5 星評分」看起來是數字，但如果只能是整數且類別有限，通常當作分類問題處理；要看任務需求決定。</div>
+      </section>
+
+      <section id="workflow">
+        <h2>機器學習的基本流程</h2>
+        <p>用數學語言說，我們想找一個函數 \( f \)，輸入特徵 \( x \)，輸出預測 \( \hat{y} \)，並讓預測盡量接近真實答案 \( y \)：</p>
+        $$ \hat{y} = f_\theta(x), \quad \theta^* = \arg\min_\theta \; L(y, \hat{y}) $$
+        <p>其中 \( \theta \) 是模型參數，\( L \) 是損失函數（Loss Function），用來衡量預測錯多少。訓練就是「找讓損失最小的 \( \theta \)」。</p>
+        <ol>
+          <li>收集並清理資料</li>
+          <li>切分 <strong>訓練集</strong> 與 <strong>測試集</strong></li>
+          <li>選模型、在訓練集上訓練</li>
+          <li>在測試集上評估，看模型對「沒看過的資料」表現如何</li>
+        </ol>
+<pre><code class="lang-python">from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+
+X, y = load_iris(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42)
+
+model = DecisionTreeClassifier().fit(X_train, y_train)
+print("測試集準確率:", model.score(X_test, y_test))</code></pre>
+        <div class="callout note"><strong>補充</strong> 為什麼一定要留測試集？因為模型在訓練資料上表現好，可能只是「背答案」（過擬合 Overfitting），測試集才能反映真實能力。</div>
+      </section>
+
+      <section id="recap" class="recap">
+        <h2>重點回顧</h2>
+        <ul>
+          <li>機器學習 = 從「資料 + 答案」中學出規則</li>
+          <li>監督式（有答案）、非監督式（沒答案）、強化學習（只有獎勵）</li>
+          <li>迴歸預測數值，分類預測類別</li>
+          <li>訓練 = 找讓損失函數最小的參數 \( \theta \)</li>
+          <li>一定要用模型沒看過的測試集來評估</li>
+        </ul>
+      </section>
+
+      <section id="refs">
+        <h2>延伸閱讀</h2>
+        <ul>
+          <li><a href="https://developers.google.com/machine-learning/crash-course">Google Machine Learning Crash Course</a></li>
+          <li><a href="https://scikit-learn.org/stable/getting_started.html">scikit-learn Getting Started</a></li>
+        </ul>
+      </section>
+    </article>
+
+    <aside class="toc" aria-label="本頁目錄"></aside>
+  </div>
+
+  <footer class="footer"></footer>
+
+  <!-- 以下 script 為模板內建，請勿修改或新增 -->
+  <script src="../assets/notes-data.js"></script>
+  <script src="../assets/main.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+</body>
+</html>

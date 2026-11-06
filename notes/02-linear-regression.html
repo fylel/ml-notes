@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>線性迴歸與梯度下降 | ML 筆記站</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body data-note-id="02-linear-regression" data-root="..">
+
+  <header class="topbar">
+    <a class="brand" href="../index.html" data-site="name">ML 筆記站</a>
+    <nav>
+      <a href="../index.html">notes</a>
+      <a href="https://github.com/" data-site="repo">github</a>
+    </nav>
+  </header>
+
+  <div class="layout">
+    <article class="note">
+      <div class="breadcrumb"></div>
+
+      <header class="note-head">
+        <div class="week">WEEK 02</div>
+        <h1>線性迴歸與梯度下降</h1>
+        <div class="meta">
+          <time datetime="2026-09-15">2026-09-15</time>
+          <span class="tag">迴歸</span>
+          <span class="tag">梯度下降</span>
+          <span class="tag">監督式學習</span>
+        </div>
+      </header>
+
+      <div class="tldr">線性迴歸用一條直線（或平面）預測數值；梯度下降則是沿著「損失下降最快的方向」一小步一小步調整參數，直到找到最好的那條線。</div>
+
+      <section id="goals">
+        <h2>學習目標</h2>
+        <ul>
+          <li>能夠寫出線性迴歸的模型與均方誤差（MSE）</li>
+          <li>能夠用「下山」的比喻解釋梯度下降</li>
+          <li>能夠說明學習率太大或太小會發生什麼事</li>
+          <li>能夠用 NumPy 從零實作梯度下降</li>
+        </ul>
+      </section>
+
+      <section id="model">
+        <h2>模型：畫一條最貼近資料的線</h2>
+        <p>想用「坪數」預測「房價」。把資料點畫在圖上，大致呈一直線趨勢，那就找一條線：</p>
+        $$ \hat{y} = w x + b $$
+        <p>\( w \) 是斜率（權重 weight），代表坪數每多 1 單位，房價增加多少；\( b \) 是截距（偏差 bias）。有多個特徵時寫成向量形式 \( \hat{y} = \mathbf{w}^\top \mathbf{x} + b \)。</p>
+        <h3>怎樣算「最貼近」？</h3>
+        <p>用均方誤差（Mean Squared Error, MSE）衡量所有點的平均誤差平方：</p>
+        $$ L(w, b) = \frac{1}{n}\sum_{i=1}^{n}\left(y_i - (w x_i + b)\right)^2 $$
+        <div class="callout note"><strong>補充</strong> 為什麼要平方？一是讓正負誤差不會互相抵消，二是大誤差會被放大懲罰，三是平方可微分，方便用梯度下降。</div>
+      </section>
+
+      <section id="gradient-descent">
+        <h2>梯度下降：蒙著眼睛下山</h2>
+        <p>想像你在濃霧中的山上，看不到山谷在哪，只能用腳感覺哪個方向最陡，往下踩一步，再重複。損失函數就是這座山，參數 \( (w, b) \) 是你的位置。</p>
+        <p>「最陡的方向」就是梯度（Gradient）的反方向。每一步更新：</p>
+        $$ w \leftarrow w - \eta \frac{\partial L}{\partial w}, \qquad b \leftarrow b - \eta \frac{\partial L}{\partial b} $$
+        <p>\( \eta \)（eta）是學習率（Learning Rate），決定每一步跨多大。對 MSE 偏微分可得：</p>
+        $$ \frac{\partial L}{\partial w} = -\frac{2}{n}\sum_{i=1}^{n} x_i\,(y_i - \hat{y}_i), \qquad \frac{\partial L}{\partial b} = -\frac{2}{n}\sum_{i=1}^{n} (y_i - \hat{y}_i) $$
+        <table class="compare">
+          <thead><tr><th>學習率</th><th>現象</th></tr></thead>
+          <tbody>
+            <tr><td>太小</td><td>每步很小，要跑非常多次才收斂</td></tr>
+            <tr><td>剛好</td><td>損失穩定下降並收斂</td></tr>
+            <tr><td>太大</td><td>一步跨過山谷，損失震盪甚至爆掉變成 NaN</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="code">
+        <h2>用 NumPy 從零實作</h2>
+<pre><code class="lang-python">import numpy as np
+
+rng = np.random.default_rng(0)
+x = rng.uniform(0, 10, 100)
+y = 3 * x + 5 + rng.normal(0, 1, 100)   # 真實答案 w=3, b=5
+
+w, b, lr = 0.0, 0.0, 0.01
+for epoch in range(2000):
+    y_hat = w * x + b
+    dw = -2 * np.mean(x * (y - y_hat))
+    db = -2 * np.mean(y - y_hat)
+    w, b = w - lr * dw, b - lr * db
+
+print(f"w={w:.2f}, b={b:.2f}")          # 約 w=3, b=5</code></pre>
+        <div class="callout warn"><strong>常見錯誤</strong> 特徵數值範圍差很大（例如坪數 10～100、屋齡 0～50、總價以元計）時，梯度下降會走得很歪。訓練前先做標準化（Standardization）。</div>
+        <div class="callout tip"><strong>小技巧</strong> 每隔一段 epoch 印出損失值。損失應該持續下降；如果上升或變 NaN，第一個懷疑學習率。</div>
+      </section>
+
+      <section id="recap" class="recap">
+        <h2>重點回顧</h2>
+        <ul>
+          <li>線性迴歸模型：\( \hat{y} = wx + b \)</li>
+          <li>損失函數用 MSE：誤差平方的平均</li>
+          <li>梯度下降：參數往梯度的反方向更新，步長由學習率 \( \eta \) 決定</li>
+          <li>學習率太大會發散、太小會很慢</li>
+          <li>特徵先標準化，梯度下降會穩定很多</li>
+        </ul>
+      </section>
+
+      <section id="refs">
+        <h2>延伸閱讀</h2>
+        <ul>
+          <li><a href="https://developers.google.com/machine-learning/crash-course/linear-regression">Google ML Crash Course — Linear Regression</a></li>
+          <li><a href="https://scikit-learn.org/stable/modules/linear_model.html">scikit-learn — Linear Models</a></li>
+        </ul>
+      </section>
+    </article>
+
+    <aside class="toc" aria-label="本頁目錄"></aside>
+  </div>
+
+  <footer class="footer"></footer>
+
+  <!-- 以下 script 為模板內建，請勿修改或新增 -->
+  <script src="../assets/notes-data.js"></script>
+  <script src="../assets/main.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  筆記模板 — 新增筆記時複製到 notes/NN-slug.html
+  1. 把所有 {{...}} 換掉（不能留下任何 {{ ）
+  2. 不要修改 <head> 與頁面最下方的 <script>
+  3. 區塊順序固定：note-head → tldr → goals → 內容 sections → recap → refs(選填)
+  4. 完成後到 assets/notes-data.js 登記，並執行 python scripts/check.py
+  規則全文見 CLAUDE.md 第 6、7 節
+  ============================================================
+-->
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{標題}} | ML 筆記站</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body data-note-id="{{id，等於檔名去掉 .html}}" data-root="..">
+
+  <header class="topbar">
+    <a class="brand" href="../index.html" data-site="name">ML 筆記站</a>
+    <nav>
+      <a href="../index.html">notes</a>
+      <a href="https://github.com/" data-site="repo">github</a>
+    </nav>
+  </header>
+
+  <div class="layout">
+    <article class="note">
+      <div class="breadcrumb"></div>
+
+      <header class="note-head">
+        <div class="week">WEEK {{兩位數週次}}</div>
+        <h1>{{標題}}</h1>
+        <div class="meta">
+          <time datetime="{{YYYY-MM-DD}}">{{YYYY-MM-DD}}</time>
+          <span class="tag">{{標籤1}}</span>
+          <span class="tag">{{標籤2}}</span>
+        </div>
+      </header>
+
+      <div class="tldr">{{一到兩句話說完這週在學什麼}}</div>
+
+      <section id="goals">
+        <h2>學習目標</h2>
+        <ul>
+          <li>能夠{{目標一}}</li>
+          <li>能夠{{目標二}}</li>
+          <li>能夠{{目標三}}</li>
+        </ul>
+      </section>
+
+      <!-- 主要內容：2～5 個 section，每個要有唯一 id 與一個 h2 -->
+      <section id="{{section-id-1}}">
+        <h2>{{段落標題一：直覺}}</h2>
+        <p>{{先用生活例子講直覺}}</p>
+        <div class="callout tip"><strong>小技巧</strong> {{提示內容}}</div>
+      </section>
+
+      <section id="{{section-id-2}}">
+        <h2>{{段落標題二：數學}}</h2>
+        <p>{{說明符號意義}}</p>
+        $$ {{LaTeX 公式}} $$
+      </section>
+
+      <section id="{{section-id-3}}">
+        <h2>{{段落標題三：實作}}</h2>
+<pre><code class="lang-python">{{15 行內、可直接執行的程式碼}}</code></pre>
+        <div class="callout warn"><strong>常見錯誤</strong> {{容易犯的錯}}</div>
+      </section>
+
+      <section id="recap" class="recap">
+        <h2>重點回顧</h2>
+        <ul>
+          <li>{{重點一}}</li>
+          <li>{{重點二}}</li>
+          <li>{{重點三}}</li>
+        </ul>
+      </section>
+
+      <!-- 選填：沒有延伸閱讀就整段刪掉 -->
+      <section id="refs">
+        <h2>延伸閱讀</h2>
+        <ul>
+          <li><a href="{{網址}}">{{連結名稱}}</a></li>
+        </ul>
+      </section>
+    </article>
+
+    <aside class="toc" aria-label="本頁目錄"></aside>
+  </div>
+
+  <footer class="footer"></footer>
+
+  <!-- 以下 script 為模板內建，請勿修改或新增 -->
+  <script src="../assets/notes-data.js"></script>
+  <script src="../assets/main.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+</body>
+</html>

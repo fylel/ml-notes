@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ML 筆記站</title>
+  <meta name="description" content="機器學習課程每週筆記，一頁一主題，考前五分鐘複習。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="home" data-root=".">
+
+  <header class="topbar">
+    <a class="brand" href="index.html" data-site="name">ML 筆記站</a>
+    <nav>
+      <a href="#notes">notes</a>
+      <a href="https://github.com/" data-site="repo">github</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="prompt"><b>$</b> ls ./notes --sort=week</p>
+      <h1 data-site="course">機器學習導論</h1>
+      <p>每週一頁、一頁一主題。先看直覺、再看公式、最後看程式碼；考前只看「重點回顧」也行。</p>
+    </section>
+
+    <div class="toolbar" id="notes">
+      <input id="search" type="search" placeholder="搜尋標題、摘要或標籤…" aria-label="搜尋筆記">
+      <div class="tag-filter" id="tag-filter" aria-label="依標籤篩選"></div>
+    </div>
+
+    <!-- 筆記卡片由 assets/main.js 依 notes-data.js 自動產生，請勿手動新增 -->
+    <div class="note-grid" id="note-grid"></div>
+  </main>
+
+  <footer class="footer"></footer>
+
+  <script src="assets/notes-data.js"></script>
+  <script src="assets/main.js"></script>
+</body>
+</html>
